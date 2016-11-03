@@ -10,6 +10,9 @@ public class Node {
     private double h;  // h is the heuristic of destination.
     private Node previous;
 
+    private double x;
+    private double y;
+    
     public Node (String nodeId) {
         this.nodeId = nodeId;
         this.d = Double.MAX_VALUE; 
@@ -44,5 +47,26 @@ public class Node {
 		this.previous = previous;
 	}
 
+	public void setCoords(double x, double y){
+		this.x = x; this.y = y;
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+	
     
+	
  }

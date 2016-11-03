@@ -4,10 +4,13 @@ package service;
 
 import routing.AStar;
 import routing.Dijkstra;
+import routing.ShortestPathAlgorithm;
 import routing.internals.Graph;
 import routing.internals.Heuristic;
+import routing.internals.Utils;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +42,7 @@ public class SPServer {
     public static class SPServlet extends HttpServlet
     {
     	Gson gson = new Gson();
+    	Graph g; ShortestPathAlgorithm spa;
     	@Override
         protected void doGet( HttpServletRequest request,
                               HttpServletResponse response ) throws ServletException,
@@ -64,8 +68,27 @@ public class SPServer {
         
         private String onRequest(String params){
         	Request req = gson.fromJson(params, Request.class);
-        	System.out.println(req.getMethod());
-        	return "yoyo";
+        	String method = req.getMethod();
+        	if(method.equals("uploadGraph")){
+        		uploadGraph(req);
+        	}else if(method.equals("sp")){
+        		return shortestPath(req);
+        	}
+        	
+        		
+        	return "ok";
+        }
+        
+        private void uploadGraph(Request req){
+        	g = Utils.convertRequestToGraph(req);
+        	spa = new Dijkstra(g);
+        }
+        
+        private String shortestPath(Request req){
+        	String src = req.getBody().getPath()[0];
+        	String dst = req.getBody().getPath()[1];
+        	List<String> sp = spa.shortestPath(src, dst);
+        	return sp.toString();
         }
         
     }

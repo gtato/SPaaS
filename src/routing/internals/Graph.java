@@ -40,12 +40,12 @@ public class Graph implements Iterable<String> {
      * 
      * @param nodeId the node to be added
      */
-    public void addNode(String nodeId) {
-        if (nodeId == null) throw new NullPointerException("The node cannot be null");
+    public void addNode(Node node) {
+        if (node == null) throw new NullPointerException("The node cannot be null");
 
 
-        graph.put(nodeId, new HashMap<String, Double>());
-        nodeIdNodeData.put(nodeId, new Node(nodeId));
+        graph.put(node.getNodeId(), new HashMap<String, Double>());
+        nodeIdNodeData.put(node.getNodeId(), node);
     }
 
     /**
@@ -57,15 +57,17 @@ public class Graph implements Iterable<String> {
      * @param nodeIdSecond  the second node to be second node in the edge
      * @param length        the length of the edge.
      */
-    public void addEdge(String nodeIdFirst, String nodeIdSecond, double length) {
+    public void addEdge(String nodeIdFirst, String nodeIdSecond) {
         if (nodeIdFirst == null || nodeIdSecond == null) throw new NullPointerException("The first nor second node can be null.");
 
 //        if (!graph.containsKey(nodeIdFirst) || !graph.containsKey(nodeIdSecond)) {
 //            throw new NoSuchElementException("Source and Destination both should be part of the part of graph");
 //        }
-
-        graph.get(nodeIdFirst).put(nodeIdSecond, length);
-        graph.get(nodeIdSecond).put(nodeIdFirst, length);
+        Node src = getNodeData(nodeIdFirst);
+        Node dst = getNodeData(nodeIdSecond);
+        double distance =  Utils.getEuclidianDistance(src, dst);
+        graph.get(nodeIdFirst).put(nodeIdSecond, distance);
+        graph.get(nodeIdSecond).put(nodeIdFirst, distance);
     }
 
     /**

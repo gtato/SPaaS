@@ -16,7 +16,7 @@ import routing.internals.Graph;
 import routing.internals.Node;
 
 
-public class Dijkstra
+public class Dijkstra extends ShortestPathAlgorithm
 {
 	private final Graph graph;
 	    

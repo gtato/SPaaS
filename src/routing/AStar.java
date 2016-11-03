@@ -16,7 +16,7 @@ import routing.internals.Graph;
 import routing.internals.Heuristic;
 import routing.internals.Node;
 
-public class AStar {
+public class AStar extends ShortestPathAlgorithm {
 
     private final Graph graph;
     private Heuristic heuristic;

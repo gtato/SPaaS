@@ -1,11 +1,16 @@
 package routing.internals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 
 public class Heuristic {
-	
+	Graph graph;
+	double distanceCoef; 
+	public Heuristic(Graph g){
+		this.graph = g;
+	}
 //	private HashMap<String, Double> heuristic = new HashMap<String, Double>();
 	
 //	public void addHeuristic(NodeData src, NodeData dst, double h){
@@ -18,7 +23,7 @@ public class Heuristic {
 //	}
 	
 	public double getHeuristic(Node src, Node dst){
-		return Utils.getEuclidianDistance(src, dst);
+		return Utils.getEuclidianDistance(src, dst)*graph.getDWRatio();
 		
 	}
 	
@@ -44,4 +49,6 @@ public class Heuristic {
 		double h = getHeuristic(src, dst);
 		src.setHeuristic(h+src.getDistance());
 	}
+	
+
 }

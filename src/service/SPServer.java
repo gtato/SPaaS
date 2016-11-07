@@ -22,6 +22,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 
 import com.google.gson.Gson;
 
+import containers.Body;
 import containers.Request;
 
 
@@ -67,28 +68,37 @@ public class SPServer {
         }
         
         private String onRequest(String params){
+        	String reply = "ok";
         	Request req = gson.fromJson(params, Request.class);
         	String method = req.getMethod();
+        	System.out.println("request: " + method + " " + req.getParameters());
+        	
         	if(method.equals("uploadGraph")){
         		uploadGraph(req);
         	}else if(method.equals("sp")){
-        		return shortestPath(req);
+        		reply  = shortestPath(req);
         	}
         	
-        		
-        	return "ok";
+        	System.out.println("replied: " + reply);
+        	return reply;
         }
         
         private void uploadGraph(Request req){
         	g = Utils.convertRequestToGraph(req);
-        	spa = new Dijkstra(g);
+        	String params = req.getParameters();
+        	if(params != null && params.equalsIgnoreCase("astar"))
+        		spa = new AStar(g, new Heuristic(g));
+        	else 
+        		spa = new  Dijkstra(g);
         }
         
         private String shortestPath(Request req){
         	String src = req.getBody().getPath()[0];
         	String dst = req.getBody().getPath()[1];
-        	List<String> sp = spa.shortestPath(src, dst);
-        	return sp.toString();
+        	System.out.println("sp: " + src + " " + dst );
+        	Body body = Utils.convertSPtoBody(spa.shortestPath(src, dst));
+        	g.resetNodes();
+        	return gson.toJson(body);
         }
         
     }

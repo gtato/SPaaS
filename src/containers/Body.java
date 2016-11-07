@@ -4,6 +4,8 @@ public class Body {
 	private Node[] nodes;
 	private Edge[] edges;
 	private String[] path;
+	private double latency;
+	
 	
 	public Node[] getNodes() {
 		return nodes;
@@ -22,5 +24,12 @@ public class Body {
 	}
 	public void setPath(String[] path) {
 		this.path = path;
+	}
+	
+	public double getLatency() {
+		return latency;
+	}
+	public void setLatency(double latency) {
+		this.latency = latency;
 	}
 }

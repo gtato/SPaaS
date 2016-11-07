@@ -1,5 +1,6 @@
 package routing.internals;
 
+import containers.Body;
 import containers.Request;
 
 public class Utils {
@@ -19,7 +20,7 @@ public class Utils {
 		}
 		
 		for(containers.Edge cedge : req.getBody().getEdges()){
-			graph.addEdge(cedge.getSource(), cedge.getDestination());
+			graph.addEdge(cedge);
 		}
 		
 		
@@ -31,4 +32,24 @@ public class Utils {
 		node.setCoords(cnode.getX(), cnode.getY());
 		return node;
 	}
+	
+	public static Body convertSPtoBody(ShortestPath sp){
+		Body body = new Body();
+		body.setLatency(sp.getLatency());
+		String[] path = new String[sp.getPath().size()];
+		path = sp.getPath().toArray(path);
+		body.setPath(path);
+		return body;
+	}
+	
+	
+	public static double round(double tr){
+		for(double i=100.0; i <= 100000.0; i*=10){
+			double ret = Math.round(tr * i ) / i;
+			if(ret != 0)
+				return ret;
+		}
+		return 0;
+	}
+
 }

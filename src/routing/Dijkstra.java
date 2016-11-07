@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 
 import routing.internals.Graph;
 import routing.internals.Node;
+import routing.internals.ShortestPath;
+import routing.internals.Utils;
 
 
 public class Dijkstra extends ShortestPathAlgorithm
@@ -49,6 +51,7 @@ public class Dijkstra extends ShortestPathAlgorithm
 
                 double weight = neighborEntry.getValue();
                 double distanceThroughU = u.getDistance() + weight;
+                distanceThroughU = Utils.round(distanceThroughU);
 		        if (distanceThroughU < v.getDistance()) {
 		            vertexQueue.remove(v);
 		
@@ -60,7 +63,7 @@ public class Dijkstra extends ShortestPathAlgorithm
         }
     }
 
-    public List<String> shortestPath(String src, String destination)
+    public ShortestPath shortestPath(String src, String destination)
     {
     	Node source = graph.getNodeData(src);
     	Node target = graph.getNodeData(destination);
@@ -71,7 +74,8 @@ public class Dijkstra extends ShortestPathAlgorithm
             path.add(vertex.getNodeId());
 
         Collections.reverse(path);
-        return path;
+        
+        return new ShortestPath(path, target.getDistance());
     }
    
     

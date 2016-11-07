@@ -57,8 +57,10 @@ public class SPClient {
 		System.out.println(reply);
 		
 		b = new Body();
-		b.setPath(new String[]{"C", "D"});
+		b.setPath(new String[]{"B", "D"});
 		req = new Request("sp", b);
+//		req.setParameters("dijkstra");
+//		req.setParameters("astar");
 		data = gson.toJson(req);
 		
 		reply = post(data);

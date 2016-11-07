@@ -2,6 +2,7 @@ package containers;
 
 public class Request {
 	private String method;
+	private String parameters;
 	private Body body;
 	
 	public String getMethod() {
@@ -24,5 +25,13 @@ public class Request {
 		super();
 		this.method = method;
 		this.body = body;
+	}
+	
+	public String getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
 	}
 }

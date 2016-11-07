@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import containers.Edge;
+
 
 
 /**
@@ -28,12 +30,18 @@ public class Graph implements Iterable<String> {
      * A map between nodeId and nodedata.
      */
     private final Map<String, Node> nodeIdNodeData;
-
+    
+    private double totalDistance  = 0;
+    private double totalWeight = 0;
+    private double dwratio;
     public Graph() {
         graph = new HashMap<String, Map<String, Double>>();
         nodeIdNodeData = new HashMap<String, Node>();
     } 
 
+    public double getDWRatio(){
+    	return dwratio;
+    }
     /**
      * Adds a new node to the graph.
      * Internally it creates the nodeData and populates the heuristic map concerning input node into node data.
@@ -57,17 +65,22 @@ public class Graph implements Iterable<String> {
      * @param nodeIdSecond  the second node to be second node in the edge
      * @param length        the length of the edge.
      */
-    public void addEdge(String nodeIdFirst, String nodeIdSecond) {
-        if (nodeIdFirst == null || nodeIdSecond == null) throw new NullPointerException("The first nor second node can be null.");
+    public void addEdge(Edge edge) {
+        if (edge.getSource()== null || edge.getDestination() == null) throw new NullPointerException("The first nor second node can be null.");
 
 //        if (!graph.containsKey(nodeIdFirst) || !graph.containsKey(nodeIdSecond)) {
 //            throw new NoSuchElementException("Source and Destination both should be part of the part of graph");
 //        }
-        Node src = getNodeData(nodeIdFirst);
-        Node dst = getNodeData(nodeIdSecond);
+        Node src = getNodeData(edge.getSource());
+        Node dst = getNodeData(edge.getDestination());
         double distance =  Utils.getEuclidianDistance(src, dst);
-        graph.get(nodeIdFirst).put(nodeIdSecond, distance);
-        graph.get(nodeIdSecond).put(nodeIdFirst, distance);
+        double weight = edge.getWeight() == 0? distance : edge.getWeight(); 
+        graph.get(edge.getSource()).put(edge.getDestination(), weight);
+        graph.get(edge.getDestination()).put(edge.getSource(), weight);
+//        System.out.println(nodeIdFirst +  " -> " + nodeIdSecond + ": " + distance );
+        totalDistance += distance;
+        totalWeight += weight;
+        dwratio = totalDistance/totalWeight;
     }
 
     /**

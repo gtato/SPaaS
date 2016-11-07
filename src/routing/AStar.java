@@ -15,6 +15,8 @@ import java.util.Set;
 import routing.internals.Graph;
 import routing.internals.Heuristic;
 import routing.internals.Node;
+import routing.internals.ShortestPath;
+import routing.internals.Utils;
 
 public class AStar extends ShortestPathAlgorithm {
 
@@ -39,14 +41,11 @@ public class AStar extends ShortestPathAlgorithm {
     /**
      * Implements the A-star algorithm and returns the path from source to destination
      * 
-     * @param source        the source nodeid
-     * @param destination   the destination nodeid
+     * @param source        the source id
+     * @param destination   the destination id
      * @return              the path from source to destination
      */
-    public List<String> shortestPath(String source, String destination) {
-        /**
-         * http://stackoverflow.com/questions/20344041/why-does-priority-queue-has-default-initial-capacity-of-11
-         */
+    public ShortestPath shortestPath(String source, String destination) {
         final Queue<Node> openQueue = new PriorityQueue<Node>(11, new AStrarNodeComparator()); 
 
         Node sourceNodeData = graph.getNodeData(source);
@@ -55,13 +54,15 @@ public class AStar extends ShortestPathAlgorithm {
         openQueue.add(sourceNodeData);
 
         final Map<String, String> path = new HashMap<String, String>();
+        double weight = 0;
         final Set<Node> closedList = new HashSet<Node>();
 
         while (!openQueue.isEmpty()) {
             final Node nodeData = openQueue.poll();
 
             if (nodeData.getNodeId().equals(destination)) { 
-                return path(path, destination);
+            	List<String> p = path(path, destination);
+            	return new ShortestPath(p, weight);
             }
 
             closedList.add(nodeData);
@@ -79,6 +80,8 @@ public class AStar extends ShortestPathAlgorithm {
                     heuristic.setHeuristic(neighbor, graph.getNodeData(destination));
 
                     path.put(neighbor.getNodeId(), nodeData.getNodeId());
+                    weight += neighbor.getDistance(); weight = Utils.round(weight);
+                    		
                     if (!openQueue.contains(neighbor)) {
                         openQueue.add(neighbor);
                     }

@@ -3,15 +3,21 @@ package containers;
 public class Edge {
 	private String source;
 	private String destination;
-//	private double weight;
+	private double weight;
 
-	public Edge(String source, String destination/*, double weight*/) {
+	public Edge(String source, String destination, double weight) {
 		super();
 		this.source = source;
 		this.destination = destination;
-//		this.weight = weight;
+		this.weight = weight;
 	}
 
+	public Edge(String source, String destination) {
+		super();
+		this.source = source;
+		this.destination = destination;
+	
+	}
 	
 	public String getSource() {
 		return source;
@@ -29,13 +35,13 @@ public class Edge {
 		this.destination = destination;
 	}
 
-//	public double getWeight() {
-//		return weight;
-//	}
-//
-//	public void setWeight(double weight) {
-//		this.weight = weight;
-//	}
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
 
 	
 }

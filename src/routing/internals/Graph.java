@@ -1,9 +1,11 @@
 package routing.internals;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import containers.Edge;
 
@@ -30,13 +32,22 @@ public class Graph implements Iterable<String> {
      * A map between nodeId and nodedata.
      */
     private final Map<String, Node> nodeIdNodeData;
+    private final int nrRandom = 10;
+    private ArrayList<String> randomNodes = new ArrayList<String>();
+    private ArrayList<Edge> randomEdges = new ArrayList<Edge>();
     
+    private ArrayList<Node> vertexlNodes = new ArrayList<Node>();
     private double totalDistance  = 0;
     private double totalWeight = 0;
     private double dwratio;
+    private Random rn;
     public Graph() {
         graph = new HashMap<String, Map<String, Double>>();
         nodeIdNodeData = new HashMap<String, Node>();
+        rn = new Random(5);
+        for(int i=0; i < 4; i++)
+        	vertexlNodes.add(new Node(1000,1000));
+        
     } 
 
     public double getDWRatio(){
@@ -54,9 +65,14 @@ public class Graph implements Iterable<String> {
 
         graph.put(node.getNodeId(), new HashMap<String, Double>());
         nodeIdNodeData.put(node.getNodeId(), node);
+        
+        addRandom(randomNodes, node.getNodeId());
+        addVertexNodes(node);
     }
 
-    /**
+    
+
+	/**
      * Adds an edge from source node to destination node.
      * There can only be a single edge from source to node.
      * Adding additional edge would overwrite the value
@@ -81,6 +97,8 @@ public class Graph implements Iterable<String> {
         totalDistance += distance;
         totalWeight += weight;
         dwratio = totalDistance/totalWeight;
+        
+        addRandom(randomEdges, edge);
     }
 
     /**
@@ -125,6 +143,40 @@ public class Graph implements Iterable<String> {
     		v.setPrevious(null);
     	}
     }
+    
+    private <T> void addRandom(ArrayList<T> list, T entry ){
+    	if(list.size() < nrRandom)
+    		list.add(entry);
+        else{
+	        int rndint = rn.nextInt(list.size());
+	        if(rn.nextDouble() > 0.7)
+	        	list.set(rndint, entry);
+        }
+    }
 	
-
+    public ArrayList<String> getRandomNodes(){
+    	return randomNodes;
+    } 
+    
+    public ArrayList<Node> getVertexNodes(){
+    	return vertexlNodes;
+    }
+    
+    public ArrayList<Edge> getRandomEdges(){
+    	return randomEdges;
+    }
+    
+    private void addVertexNodes(Node node) {
+    	//1-2
+    	//  |
+    	//4-3
+    	Node[] sqrVerteces = new Node[]{new Node(0,1), new Node(1,1), new Node(1,0), new Node(0,0)};
+    	for(int i = 0; i < vertexlNodes.size(); i++){
+    		if (Utils.getEuclidianDistance(node, sqrVerteces[i]) 
+    		  < Utils.getEuclidianDistance(vertexlNodes.get(i), sqrVerteces[i]))
+    			vertexlNodes.set(i, node);
+    	}
+    	
+		
+	}
 }

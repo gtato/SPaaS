@@ -35,12 +35,7 @@ public class Heuristic {
 //	}
 	
 	
-//	private String getId(String src, String dst){
-//		String id = src.concat(dst);
-//		if (src.compareToIgnoreCase(dst) > 0)
-//			id = dst.concat(src);
-//		return id;
-//	}
+//	
 	
 	
 	

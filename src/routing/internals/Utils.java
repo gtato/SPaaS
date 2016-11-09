@@ -13,13 +13,13 @@ public class Utils {
         return distance; 
     }
 	
-	public static Graph convertRequestToGraph(Request req){
+	public static Graph convertBodyToGraph(Body body){
 		Graph graph = new Graph();
-		for(containers.Node cnode : req.getBody().getNodes()){
+		for(containers.Node cnode : body.getNodes()){
 			graph.addNode(convertCNodeToNode(cnode));
 		}
 		
-		for(containers.Edge cedge : req.getBody().getEdges()){
+		for(containers.Edge cedge : body.getEdges()){
 			graph.addEdge(cedge);
 		}
 		
@@ -51,5 +51,11 @@ public class Utils {
 		}
 		return 0;
 	}
-
+	
+	public static String concat(String src, String dst){
+		String id = src.concat(dst);
+		if (src.compareToIgnoreCase(dst) > 0)
+			id = dst.concat(src);
+		return id;
+	}
 }

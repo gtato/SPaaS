@@ -23,4 +23,8 @@ public class ShortestPath {
 		this.latency = latency;
 	}
 	
+	public String toString(){
+		return "path: " + this.path.toString() + " latency: " + this.latency;
+		
+	}
 }

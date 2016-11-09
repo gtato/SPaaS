@@ -10,7 +10,9 @@ import routing.internals.Heuristic;
 import routing.internals.Utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,27 +25,29 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import com.google.gson.Gson;
 
 import containers.Body;
+import containers.Edge;
+import containers.Node;
 import containers.Request;
 
 
 public class SPServer {
-	public static void main( String[] args ) throws Exception
-    {
-    	
-		Server server = new Server(8080);
-        ServletHandler handler = new ServletHandler();
-        server.setHandler(handler);
-
-        handler.addServletWithMapping(SPServlet.class, "/*");
-        server.start();
-        server.join();
-    }
+//	public static void main( String[] args ) throws Exception
+//    {
+//    	
+//		Server server = new Server(8080);
+//        ServletHandler handler = new ServletHandler();
+//        server.setHandler(handler);
+//
+//        handler.addServletWithMapping(SPServlet.class, "/*");
+//        server.start();
+//        server.join();
+//    }
 	
 	@SuppressWarnings("serial")
     public static class SPServlet extends HttpServlet
     {
     	Gson gson = new Gson();
-    	Graph g; ShortestPathAlgorithm spa;
+    	Graph g = null; ShortestPathAlgorithm spa;
     	@Override
         protected void doGet( HttpServletRequest request,
                               HttpServletResponse response ) throws ServletException,
@@ -77,14 +81,16 @@ public class SPServer {
         		uploadGraph(req);
         	}else if(method.equals("sp")){
         		reply  = shortestPath(req);
-        	}
+        	}else if(method.equals("minmax")){
+        		reply  = minmax();
+        	} 
         	
         	System.out.println("replied: " + reply);
         	return reply;
         }
         
         private void uploadGraph(Request req){
-        	g = Utils.convertRequestToGraph(req);
+        	g = Utils.convertBodyToGraph(req.getBody());
         	String params = req.getParameters();
         	if(params != null && params.equalsIgnoreCase("astar"))
         		spa = new AStar(g, new Heuristic(g));
@@ -97,56 +103,51 @@ public class SPServer {
         	String dst = req.getBody().getPath()[1];
         	System.out.println("sp: " + src + " " + dst );
         	Body body = Utils.convertSPtoBody(spa.shortestPath(src, dst));
-        	g.resetNodes();
+        	
         	return gson.toJson(body);
         }
         
+        private String minmax(){
+        	double[] minmax = spa.minmaxPath();
+        	return gson.toJson(minmax);
+        }
+        
+        
     }
 	
-//	public static void main(String[] args) {
-//        Heuristic heuristic = new Heuristic();
-//        
-//        heuristic.addHeuristic("A", "A", 0);
-//        heuristic.addHeuristic("B", "B", 0);
-//        heuristic.addHeuristic("C", "C", 0);
-//        heuristic.addHeuristic("E", "E", 0);
-//        heuristic.addHeuristic("F", "F", 0);
-//        
-//        heuristic.addHeuristic("A", "B", 10);
-//        heuristic.addHeuristic("A", "C", 20);
-//        heuristic.addHeuristic("A", "E", 100);
-//        heuristic.addHeuristic("A", "F", 110);
-//        
-//        heuristic.addHeuristic("B", "C", 10);
-//        heuristic.addHeuristic("B", "E", 25);
-//        heuristic.addHeuristic("B", "F", 40);
-//        
-//        heuristic.addHeuristic("C", "E", 10);
-//        heuristic.addHeuristic("C", "F", 30);
-//        
-//        heuristic.addHeuristic("E", "F", 10);
-//        
-//
-//        Graph graph = new Graph();
-//        graph.addNode("A");
-//        graph.addNode("B");
-//        graph.addNode("C");
-//        graph.addNode("E");
-//        graph.addNode("F");
-//
-//        graph.addEdge("A", "B",  10);
-//        graph.addEdge("A", "E", 100);
-//        graph.addEdge("B", "C", 10);
-//        graph.addEdge("C", "E", 10);
-//        graph.addEdge("C", "F", 30);
-//        graph.addEdge("E", "F", 10);
-//
-//        AStar aStar = new AStar(graph, heuristic);
-//        Dijkstra dijkstra = new Dijkstra(graph);
-//
-//        System.out.println(aStar.shortestPath("A", "F"));
-//        graph.resetNodes();
-//        System.out.println(dijkstra.shortestPath("A", "F"));
-//        
-//    }
+	public static void main(String[] args) {
+		Random r = new Random(123);
+		
+		
+		
+		String[] ids = new String[]{"A", "B", "C", "D", "E"};
+		
+		Node[] nodes = new Node[5];
+		ArrayList<Edge> edgesList = new ArrayList<Edge>();
+		
+		for(int i = 0; i < ids.length; i++)
+			nodes[i] = new Node(ids[i], r.nextDouble(), r.nextDouble());
+
+		Edge[] edges = new Edge[6];
+		edges[0] = new Edge("A", "B");
+		edges[1] = new Edge("A", "E");
+		edges[2] = new Edge("B", "C");
+		edges[3] = new Edge("C", "E");
+		edges[4] = new Edge("C", "D");
+		edges[5] = new Edge("E", "D");
+     
+		Body body = new Body();
+		body.setNodes(nodes);
+		body.setEdges(edges);
+		Graph g = Utils.convertBodyToGraph(body);
+		ShortestPathAlgorithm spa;
+		spa = new AStar(g, new Heuristic(g));
+//		spa = new  Dijkstra(g);
+		
+		System.out.println(spa.shortestPath("A", "C"));
+		
+		double[] minmax = spa.minmaxPath();
+		System.out.println(minmax[0] +" "+ minmax[1]);
+		
+    }
 }

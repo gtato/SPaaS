@@ -65,6 +65,12 @@ public class SPClient {
 		
 		reply = post(data);
 		System.out.println(reply);
+		
+		
+		req = new Request("minmax", b);
+		data = gson.toJson(req);
+		reply = post(data);
+		System.out.println(reply);
 	} 
 	
 	public static String post(String data){

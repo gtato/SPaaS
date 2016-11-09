@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -20,12 +21,9 @@ import routing.internals.Utils;
 
 public class Dijkstra extends ShortestPathAlgorithm
 {
-	private final Graph graph;
-	    
-
-    public Dijkstra (Graph graphAStar) {
-        this.graph = graphAStar;
-        
+	
+    public Dijkstra (Graph g) {
+       super(g);
     }
     
     class DijsktraNodeComparator implements Comparator<Node>{
@@ -65,6 +63,7 @@ public class Dijkstra extends ShortestPathAlgorithm
 
     public ShortestPath shortestPath(String src, String destination)
     {
+    	graph.resetNodes();
     	Node source = graph.getNodeData(src);
     	Node target = graph.getNodeData(destination);
     	computePaths(source);
@@ -74,10 +73,70 @@ public class Dijkstra extends ShortestPathAlgorithm
             path.add(vertex.getNodeId());
 
         Collections.reverse(path);
+        ShortestPath sp = new ShortestPath(path, target.getDistance());
         
-        return new ShortestPath(path, target.getDistance());
+        return sp;
     }
+
+//	@Override
+//	public double[] minmaxPath() {
+//		resetMinMax();
+//		graph.resetNodes();
+//		Iterator<String> it = graph.iterator();
+//		String id = it.next();
+//		Node src = graph.getNodeData(id);
+//		computePaths(src);
+//		
+//		
+//		
+//		while(it.hasNext()){
+//			Node target = graph.getNodeData(it.next());
+//			if(id.equals(target.getNodeId())) continue;
+//			for (Node vertex = target; vertex != null; vertex = vertex.getPrevious())
+//			{
+//				if(id.equals(vertex.getNodeId())) continue;
+//				if (vertex.getDistance() > max)
+//					max = vertex.getDistance();
+//				if (vertex.getDistance() < min){
+//					min = vertex.getDistance();
+//				}
+//			}
+//	            
+//		}
+//		
+//		return new double[]{min, max};
+//	}
    
+	
+	@Override
+	public double[] minmaxPath() {
+		resetMinMax();
+		graph.resetNodes();
+		Iterator<String> it = graph.iterator();
+		String id = graph.getVertexNodes().get(0).getNodeId();
+		Node src = graph.getNodeData(id);
+		computePaths(src);
+		
+		
+		
+		while(it.hasNext()){
+			Node target = graph.getNodeData(it.next());
+			if(id.equals(target.getNodeId())) continue;
+			for (Node vertex = target; vertex != null; vertex = vertex.getPrevious())
+			{
+				if(id.equals(vertex.getNodeId())) continue;
+				if (vertex.getDistance() > max)
+					max = vertex.getDistance();
+				if (vertex.getDistance() - vertex.getPrevious().getDistance() < min){
+					min = Utils.round(vertex.getDistance() - vertex.getPrevious().getDistance());
+//					if(min == 0) System.out.println(vertex.getNodeId());
+				}
+			}
+	            
+		}
+		
+		return new double[]{min, max};
+	}
     
     
     

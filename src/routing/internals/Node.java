@@ -18,6 +18,12 @@ public class Node {
         this.d = Double.MAX_VALUE; 
     }
 
+    public Node (double x, double y) {
+        this.nodeId = "";
+    	this.x = x;
+        this.y = y;
+    }
+    
     public String getNodeId() {
         return nodeId;
     }

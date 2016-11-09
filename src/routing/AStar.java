@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 
 import routing.internals.Graph;
@@ -20,11 +21,11 @@ import routing.internals.Utils;
 
 public class AStar extends ShortestPathAlgorithm {
 
-    private final Graph graph;
+    
     private Heuristic heuristic;
 
-    public AStar (Graph graphAStar, Heuristic h) {
-        this.graph = graphAStar;
+    public AStar (Graph g, Heuristic h) {
+        super(g);
         this.heuristic = h;
     }
 
@@ -46,7 +47,8 @@ public class AStar extends ShortestPathAlgorithm {
      * @return              the path from source to destination
      */
     public ShortestPath shortestPath(String source, String destination) {
-        final Queue<Node> openQueue = new PriorityQueue<Node>(11, new AStrarNodeComparator()); 
+    	graph.resetNodes();
+    	final Queue<Node> openQueue = new PriorityQueue<Node>(11, new AStrarNodeComparator()); 
 
         Node sourceNodeData = graph.getNodeData(source);
         sourceNodeData.setDistance(0);
@@ -59,10 +61,13 @@ public class AStar extends ShortestPathAlgorithm {
 
         while (!openQueue.isEmpty()) {
             final Node nodeData = openQueue.poll();
+            if (nodeData.getDistance() > max) max = nodeData.getDistance();
+			if (nodeData.getDistance()  < min && !nodeData.getNodeId().equals(source)) min = nodeData.getDistance();
+
 
             if (nodeData.getNodeId().equals(destination)) { 
             	List<String> p = path(path, destination);
-            	return new ShortestPath(p, weight);
+            	return new ShortestPath(p, Utils.round(nodeData.getDistance()));
             }
 
             closedList.add(nodeData);
@@ -74,7 +79,7 @@ public class AStar extends ShortestPathAlgorithm {
 
                 double distanceBetweenTwoNodes = neighborEntry.getValue();
                 double tentativeG = distanceBetweenTwoNodes + nodeData.getDistance();
-
+                
                 if (tentativeG < neighbor.getDistance()) {
                     neighbor.setDistance(tentativeG);
                     heuristic.setHeuristic(neighbor, graph.getNodeData(destination));
@@ -107,6 +112,52 @@ public class AStar extends ShortestPathAlgorithm {
         return pathList;
     }
 
+
+//	@Override
+//	public double[] minmaxPath() {
+//		Random r = new Random(5);
+//		ArrayList<String> rands = graph.getRandomNodes();
+//		ArrayList<String> tested = new ArrayList<String>();
+//		double totalMin = Double.MAX_VALUE;
+//		double totalMax = -1;
+//		int trials = 3;
+//		while(trials >= 0){
+//			String src = rands.get(r.nextInt(rands.size()));
+//			String dest = rands.get(r.nextInt(rands.size()));
+//			String concat = Utils.concat(src, dest); 
+//			if(src == null || dest==null || src.equals(dest) || tested.contains(concat)) 
+//				continue;
+//			
+//			tested.add(concat);
+//			resetMinMax();
+//			graph.resetNodes();
+//			shortestPath(src, dest);
+//			if(min < totalMin) totalMin = min;
+//			if(max > totalMax) totalMax = max;
+//			trials--;
+//		}
+//		
+//		return new double[]{Utils.round(totalMin), Utils.round(totalMax)};
+//	}
+
+    
+    @Override
+	public double[] minmaxPath() {
+		ArrayList<Node> sqrNodes = graph.getVertexNodes();
+		double totalMin = Double.MAX_VALUE;
+		double totalMax = -1;
+		for(int i = 0 ; i < 2; i++){
+			String src = sqrNodes.get(i).getNodeId();
+			String dest = sqrNodes.get(i+2).getNodeId();
+			resetMinMax();
+			graph.resetNodes();
+			shortestPath(src, dest);
+			if(min < totalMin) totalMin = min;
+			if(max > totalMax) totalMax = max;
+		}
+				
+		return new double[]{Utils.round(totalMin), Utils.round(totalMax)};
+	}
 
     
 }

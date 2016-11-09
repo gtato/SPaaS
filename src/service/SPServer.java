@@ -31,17 +31,17 @@ import containers.Request;
 
 
 public class SPServer {
-//	public static void main( String[] args ) throws Exception
-//    {
-//    	
-//		Server server = new Server(8080);
-//        ServletHandler handler = new ServletHandler();
-//        server.setHandler(handler);
-//
-//        handler.addServletWithMapping(SPServlet.class, "/*");
-//        server.start();
-//        server.join();
-//    }
+	public static void main( String[] args ) throws Exception
+    {
+    	
+		Server server = new Server(8080);
+        ServletHandler handler = new ServletHandler();
+        server.setHandler(handler);
+
+        handler.addServletWithMapping(SPServlet.class, "/*");
+        server.start();
+        server.join();
+    }
 	
 	@SuppressWarnings("serial")
     public static class SPServlet extends HttpServlet
@@ -115,39 +115,39 @@ public class SPServer {
         
     }
 	
-	public static void main(String[] args) {
-		Random r = new Random(123);
-		
-		
-		
-		String[] ids = new String[]{"A", "B", "C", "D", "E"};
-		
-		Node[] nodes = new Node[5];
-		ArrayList<Edge> edgesList = new ArrayList<Edge>();
-		
-		for(int i = 0; i < ids.length; i++)
-			nodes[i] = new Node(ids[i], r.nextDouble(), r.nextDouble());
-
-		Edge[] edges = new Edge[6];
-		edges[0] = new Edge("A", "B");
-		edges[1] = new Edge("A", "E");
-		edges[2] = new Edge("B", "C");
-		edges[3] = new Edge("C", "E");
-		edges[4] = new Edge("C", "D");
-		edges[5] = new Edge("E", "D");
-     
-		Body body = new Body();
-		body.setNodes(nodes);
-		body.setEdges(edges);
-		Graph g = Utils.convertBodyToGraph(body);
-		ShortestPathAlgorithm spa;
-		spa = new AStar(g, new Heuristic(g));
-//		spa = new  Dijkstra(g);
-		
-		System.out.println(spa.shortestPath("A", "C"));
-		
-		double[] minmax = spa.minmaxPath();
-		System.out.println(minmax[0] +" "+ minmax[1]);
-		
-    }
+//	public static void main(String[] args) {
+//		Random r = new Random(123);
+//		
+//		
+//		
+//		String[] ids = new String[]{"A", "B", "C", "D", "E"};
+//		
+//		Node[] nodes = new Node[5];
+//		ArrayList<Edge> edgesList = new ArrayList<Edge>();
+//		
+//		for(int i = 0; i < ids.length; i++)
+//			nodes[i] = new Node(ids[i], r.nextDouble(), r.nextDouble());
+//
+//		Edge[] edges = new Edge[6];
+//		edges[0] = new Edge("A", "B");
+//		edges[1] = new Edge("A", "E");
+//		edges[2] = new Edge("B", "C");
+//		edges[3] = new Edge("C", "E");
+//		edges[4] = new Edge("C", "D");
+//		edges[5] = new Edge("E", "D");
+//     
+//		Body body = new Body();
+//		body.setNodes(nodes);
+//		body.setEdges(edges);
+//		Graph g = Utils.convertBodyToGraph(body);
+//		ShortestPathAlgorithm spa;
+//		spa = new AStar(g, new Heuristic(g));
+////		spa = new  Dijkstra(g);
+//		
+//		System.out.println(spa.shortestPath("A", "C"));
+//		
+//		double[] minmax = spa.minmaxPath();
+//		System.out.println(minmax[0] +" "+ minmax[1]);
+//		
+//    }
 }

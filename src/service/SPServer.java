@@ -39,6 +39,9 @@ public class SPServer {
         server.setHandler(handler);
 
         handler.addServletWithMapping(SPServlet.class, "/*");
+        server.setAttribute("org.eclipse.jetty.server.Request.maxFormContentSize", -1);
+//        while(server.getAttributeNames().hasMoreElements())
+//        	System.out.println(server.getAttributeNames().nextElement());
         server.start();
         server.join();
     }
